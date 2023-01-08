@@ -6,25 +6,30 @@ import { Venit } from './model/Venit';
 
 function App() {
     
-  const [venituri, setVenituri] = useState<Venit[]>();
-  const [selectedVenit, setSelectedVenit] = useState<Venit[]>();
+   const [venituri, setVenituri] = useState<Venit[]>();
+  const [selectedVenit, setSelectedVenit] = useState<Venit>();
   
   useEffect(()=>{
     axios.get('http://localhost:8080/buget/venituri').then((response) => setVenituri(response.data));
-  
-    const onVenitClicked =(id: number ) => {
-      axios.get('http://localhost:8080/buget/venituri/'+id).then((response) => setVenituri(response.data));
-    }
   }, []);
-  
-  function onVenitClicked(id: number): void {
-    throw new Error('Function not implemented.');
-  }
 
+    const onVenitClicked = (id: number ) => {
+      axios.get('http://localhost:8080/buget/venituri/' + id).then((response) => setSelectedVenit(response.data));
+    }
+ 
+    const clearSelectedVenit = () => {
+      setSelectedVenit(undefined);
+    }
+    
   return (
     <div className="App">
+    {selectedVenit && <div>
+        <div onClick={() => clearSelectedVenit()}> Close </div>
+        <div>Tip Venit: {selectedVenit.tip}</div>
+    </div>}
+
     {venituri?.map(venit=>
-    <div onClick={()=> onVenitClicked(venit.id)}> {venit.valoare} </div>)
+      <div onClick={()=> onVenitClicked(venit.id)}> {venit.valoare} </div>)
     }
   </div>
   );
